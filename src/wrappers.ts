@@ -103,13 +103,13 @@ export function getWrappedApp(
   const router = new OakRouter();
 
   return {
-    Listen: (port: number, callback: () => void) => {
+    Listen: (port: number, callback: () => void, ip = "127.0.0.1") => {
       app.use(router.allowedMethods());
       app.use(router.routes());
       app.addEventListener("listen", () => {
         callback();
       });
-      app.listen(`127.0.0.1:${port}`);
+      app.listen(`${ip}:${port}`);
     },
 
     get: (
