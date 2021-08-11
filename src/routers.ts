@@ -1,4 +1,4 @@
-import { dtObj, dtObjStatic } from "https://deno.land/x/drytype@v0.2.1/mod.ts";
+import { dtObj, dtObjStatic } from "https://deno.land/x/drytype@v0.3.0/mod.ts";
 import { WrappedResponse } from "./wrappers.ts";
 import {
   FormDataFile,

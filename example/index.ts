@@ -1,7 +1,7 @@
 import { Logger } from "../src/logger.ts";
 import { getWrappedApp } from "../src/index.ts";
 import userRoutes from "./user-routes.ts";
-import { String } from "https://deno.land/x/drytype@v0.2.1/mod.ts";
+import { String } from "https://deno.land/x/drytype@v0.3.0/mod.ts";
 import {
   Application,
   HttpServerNative,
@@ -22,8 +22,9 @@ app.get("/testGet", (_, next) => {
 });
 
 app.post("/testPost", { username: String }, (ctx) => {
-  console.log(ctx.hyFiles);
-  ctx.hyRes.genericSuccess();
+  ctx.hyRes.success("nice work buddy, you sent me " + ctx.hyBody.username, {
+    hey: "hello",
+  });
 });
 
 app.put("/testPut", { username: String }, (ctx) => {

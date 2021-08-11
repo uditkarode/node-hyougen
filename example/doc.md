@@ -7,6 +7,4 @@
 * **POST** /testPost
 	- `username`: string
 
-* **POST** /testPut
-	- `username`: string
-
+# PUT routes
