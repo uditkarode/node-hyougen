@@ -40,7 +40,12 @@ export function getParamsFromStructure<O extends dtObj>(structure: O) {
 
 export const METHODS = {
   get: "GET",
+  head: "HEAD",
+  options: "OPTIONS",
   post: "POST",
+  put: "PUT",
+  delete: "DELETE",
+  patch: "PATCH",
 } as const;
 
 export function getRoutedWrappedApp(
@@ -57,6 +62,18 @@ export function getRoutedWrappedApp(
         ...(rootMware as hyRouterMiddleware[]),
         ...middleware,
       ),
+    head: (ep, ...middleware) =>
+      wapp.head(
+        `${root}${ep}`,
+        ...(rootMware as hyRouterMiddleware[]),
+        ...middleware,
+      ),
+    options: (ep, ...middleware) =>
+      wapp.options(
+        `${root}${ep}`,
+        ...(rootMware as hyRouterMiddleware[]),
+        ...middleware,
+      ),
     post: (ep, structure, ...middleware) =>
       wapp.post(
         `${root}${ep}`,
@@ -66,7 +83,23 @@ export function getRoutedWrappedApp(
         ...middleware,
       ),
     put: (ep, structure, ...middleware) =>
-      wapp.post(
+      wapp.put(
+        `${root}${ep}`,
+        structure,
+        // deno-lint-ignore no-explicit-any
+        ...(rootMware as hyBodiedRouterMiddleware<any>[]),
+        ...middleware,
+      ),
+    delete: (ep, structure, ...middleware) =>
+      wapp.delete(
+        `${root}${ep}`,
+        structure,
+        // deno-lint-ignore no-explicit-any
+        ...(rootMware as hyBodiedRouterMiddleware<any>[]),
+        ...middleware,
+      ),
+    patch: (ep, structure, ...middleware) =>
+      wapp.patch(
         `${root}${ep}`,
         structure,
         // deno-lint-ignore no-explicit-any

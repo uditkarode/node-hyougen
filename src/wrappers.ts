@@ -26,6 +26,16 @@ export interface WrappedApp {
     ...middleware: hyRouterMiddleware[]
   ): void;
 
+  head(
+    ep: string,
+    ...middleware: hyRouterMiddleware[]
+  ): void;
+
+  options(
+    ep: string,
+    ...middleware: hyRouterMiddleware[]
+  ): void;
+
   post<O extends dtObj>(
     ep: string,
     structure: O,
@@ -33,6 +43,18 @@ export interface WrappedApp {
   ): void;
 
   put<O extends dtObj>(
+    ep: string,
+    structure: O,
+    ...middleware: hyBodiedRouterMiddleware<O>[]
+  ): void;
+
+  delete<O extends dtObj>(
+    ep: string,
+    structure: O,
+    ...middleware: hyBodiedRouterMiddleware<O>[]
+  ): void;
+
+  patch<O extends dtObj>(
     ep: string,
     structure: O,
     ...middleware: hyBodiedRouterMiddleware<O>[]
@@ -124,6 +146,30 @@ export function getWrappedApp(
       );
     },
 
+    head: (
+      ep: string,
+      ...middleware: hyRouterMiddleware[]
+    ) => {
+      middleware.unshift(NonBodiedMiddleware);
+      recordRoute(ep, METHODS.head, devMode);
+      router.head(
+        ep,
+        ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+      );
+    },
+
+    options: (
+      ep: string,
+      ...middleware: hyRouterMiddleware[]
+    ) => {
+      middleware.unshift(NonBodiedMiddleware);
+      recordRoute(ep, METHODS.options, devMode);
+      router.options(
+        ep,
+        ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+      );
+    },
+
     post: function <O extends dtObj>(
       ep: string,
       structure: O,
@@ -143,8 +189,34 @@ export function getWrappedApp(
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
-      recordBodiedRoute(ep, structure, METHODS.post, devMode),
+      recordBodiedRoute(ep, structure, METHODS.put, devMode),
         router.put(
+          ep,
+          ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        );
+    },
+
+    delete: function <O extends dtObj>(
+      ep: string,
+      structure: O,
+      ...middleware: hyBodiedRouterMiddleware<O>[]
+    ) {
+      middleware.unshift(BodiedMiddleware<O>(structure, devMode));
+      recordBodiedRoute(ep, structure, METHODS.delete, devMode),
+        router.delete(
+          ep,
+          ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        );
+    },
+
+    patch: function <O extends dtObj>(
+      ep: string,
+      structure: O,
+      ...middleware: hyBodiedRouterMiddleware<O>[]
+    ) {
+      middleware.unshift(BodiedMiddleware<O>(structure, devMode));
+      recordBodiedRoute(ep, structure, METHODS.patch, devMode),
+        router.patch(
           ep,
           ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
         );
