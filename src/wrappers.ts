@@ -16,7 +16,7 @@ import {
   RouterMiddleware,
 } from "https://deno.land/x/oak@v7.7.0/mod.ts";
 
-const TAG = "wrappers.ts";
+const TAG = "hyougen/wrappers.ts";
 
 export interface WrappedApp {
   Listen(post: number, callback: () => void): void;

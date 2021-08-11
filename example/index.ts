@@ -12,7 +12,7 @@ const app = getWrappedApp(
   true,
 );
 
-const TAG = "index.ts";
+const TAG = "hyougen/examples/index.ts";
 
 app.get("/testGet", (_, next) => {
   console.log("heu!");

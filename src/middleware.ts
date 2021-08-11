@@ -13,7 +13,7 @@ import {
   FormDataReader,
 } from "https://deno.land/x/oak@v7.7.0/mod.ts";
 
-const TAG = "middleware.ts";
+const TAG = "hyougen/middleware.ts";
 
 export const NonBodiedMiddleware: hyRouterMiddleware = (context, next) => {
   context.hyRes = getWrappedResponse(context.response);
