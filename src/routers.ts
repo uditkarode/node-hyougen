@@ -16,9 +16,9 @@ export type BodiedContext<O extends dtObj> = RouterContext & {
 export type hyRouterMiddleware = (
   context: NonBodiedContext,
   next: () => Promise<unknown>,
-) => void | Promise<void>;
+) => Promise<unknown> | unknown;
 
 export type hyBodiedRouterMiddleware<O extends dtObj> = (
   ctx: BodiedContext<O>,
   next: () => Promise<unknown>,
-) => void | Promise<void>;
+) => Promise<unknown> | unknown;
