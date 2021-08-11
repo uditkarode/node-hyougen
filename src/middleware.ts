@@ -58,6 +58,10 @@ export function BodiedMiddleware<O extends dtObj>(
           }
           break;
 
+        case "json":
+          Object.assign(objBody, await reqBody.value);
+          break;
+
         default:
           throw new Error(
             `Support for ${reqBody.type} bodies not yet added!`,
