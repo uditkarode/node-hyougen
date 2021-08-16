@@ -131,7 +131,7 @@ export function getWrappedApp(
 
   return {
     Listen: (port: number, callback: () => void, ip = "127.0.0.1") => {
-      app.use(koaBody());
+      app.use(koaBody({ multipart: true }));
       app.use(router.allowedMethods());
       app.use(router.routes());
       app.listen(port, callback);
