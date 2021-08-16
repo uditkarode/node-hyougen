@@ -1,6 +1,6 @@
-import { dtObj } from "https://deno.land/x/drytype@v0.3.0/mod.ts";
-import { WrappedApp } from "./wrappers.ts";
-import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers.ts";
+import { dtObj } from "drytypes";
+import { WrappedApp } from "./wrappers";
+import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers";
 
 export const getCodeFromKind = (e: ErrorKind) => {
   switch (e) {
@@ -51,7 +51,6 @@ export const METHODS = {
 export function getRoutedWrappedApp(
   wapp: WrappedApp,
   root: string,
-  // deno-lint-ignore no-explicit-any
   ...rootMware: hyBodiedRouterMiddleware<any>[]
 ): WrappedApp {
   return {
@@ -78,7 +77,6 @@ export function getRoutedWrappedApp(
       wapp.post(
         `${root}${ep}`,
         structure,
-        // deno-lint-ignore no-explicit-any
         ...(rootMware as hyBodiedRouterMiddleware<any>[]),
         ...middleware,
       ),
@@ -86,7 +84,6 @@ export function getRoutedWrappedApp(
       wapp.put(
         `${root}${ep}`,
         structure,
-        // deno-lint-ignore no-explicit-any
         ...(rootMware as hyBodiedRouterMiddleware<any>[]),
         ...middleware,
       ),
@@ -94,7 +91,6 @@ export function getRoutedWrappedApp(
       wapp.delete(
         `${root}${ep}`,
         structure,
-        // deno-lint-ignore no-explicit-any
         ...(rootMware as hyBodiedRouterMiddleware<any>[]),
         ...middleware,
       ),
@@ -102,7 +98,6 @@ export function getRoutedWrappedApp(
       wapp.patch(
         `${root}${ep}`,
         structure,
-        // deno-lint-ignore no-explicit-any
         ...(rootMware as hyBodiedRouterMiddleware<any>[]),
         ...middleware,
       ),

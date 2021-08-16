@@ -1,18 +1,12 @@
-import { Logger } from "../src/logger.ts";
-import { getWrappedApp } from "../src/index.ts";
-import userRoutes from "./user-routes.ts";
-import { String } from "https://deno.land/x/drytype@v0.3.0/mod.ts";
-import {
-  Application,
-  HttpServerNative,
-} from "https://deno.land/x/oak@v7.7.0/mod.ts";
+import { Logger } from "../src/logger";
+import { getWrappedApp } from "../src/index";
+import userRoutes from "./user-routes";
+import { String } from "drytypes";
+import koa from "koa";
 
-const app = getWrappedApp(
-  new Application({ serverConstructor: HttpServerNative }),
-  true,
-);
+const app = getWrappedApp(new koa());
 
-const TAG = "hyougen/examples/index.ts";
+const TAG = "hyougen/examples/index";
 
 app.get("/testGet", (_, next) => {
   console.log("heu!");
@@ -32,7 +26,7 @@ app.put("/testPut", { username: String }, (ctx) => {
   ctx.hyRes.genericSuccess();
 });
 
-userRoutes(app, "/user");
+// userRoutes(app, "/user");
 
 app.Listen(8040, () => {
   app.saveApiDoc();

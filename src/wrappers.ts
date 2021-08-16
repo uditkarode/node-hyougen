@@ -1,22 +1,27 @@
-import { ResponseStrings } from "./constants.ts";
-import { dtObj } from "https://deno.land/x/drytype@v0.2.1/mod.ts";
-import { METHODS } from "./utils.ts";
-import { BodiedMiddleware, NonBodiedMiddleware } from "./middleware.ts";
-import { Logger } from "./logger.ts";
-import { HyError } from "./hyougen-error.ts";
-import { getParams, recordBodiedRoute, recordRoute } from "./handlers.ts";
-import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers.ts";
-import { getCodeFromKind, Response } from "./utils.ts";
+import { ResponseStrings } from "./constants";
+import { dtObj } from "drytypes";
+import { METHODS } from "./utils";
+import { BodiedMiddleware, NonBodiedMiddleware } from "./middleware";
+import { Logger } from "./logger";
+import { HyError } from "./hyougen-error";
+import { getParams, recordBodiedRoute, recordRoute } from "./handlers";
+import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers";
+import { getCodeFromKind, Response } from "./utils";
+import fs from 'fs';
+import KoaRouter = require("koa-router");
+import koa from 'koa';
+import koaBody = require("koa-body");
 
 import {
-  Application as OakApplication,
-  Context as OakContext,
-  Response as OakResponse,
-  Router as OakRouter,
-  RouterMiddleware,
-} from "https://deno.land/x/oak@v7.7.0/mod.ts";
+   DefaultState,
+   DefaultContext,
+   ParameterizedContext as KoaContext,
+   Response as KoaResponse,
+} from "koa";
 
-const TAG = "hyougen/wrappers.ts";
+type KoaApplication = koa<DefaultState, DefaultContext>;
+
+const TAG = "hyougen/wrappers";
 
 export interface WrappedApp {
   Listen(post: number, callback: () => void): void;
@@ -70,7 +75,7 @@ export interface WrappedResponse {
 }
 
 /* custom type getters */
-export function getWrappedResponse(res: OakResponse): WrappedResponse {
+export function getWrappedResponse(res: KoaResponse): WrappedResponse {
   return {
     success: function Success(
       message: string = ResponseStrings.SUCC_GENERIC,
@@ -85,13 +90,13 @@ export function getWrappedResponse(res: OakResponse): WrappedResponse {
 }
 
 export function getWrappedApp(
-  app: OakApplication<Record<string, unknown>>,
+  app: KoaApplication,
   devMode = false,
 ): WrappedApp {
   /* set up custom error handler */
   app.use(
     async (
-      ctx: OakContext,
+      ctx: KoaContext,
       next: () => Promise<unknown>,
     ) => {
       try {
@@ -122,16 +127,14 @@ export function getWrappedApp(
     },
   );
 
-  const router = new OakRouter();
+  const router = new KoaRouter();
 
   return {
     Listen: (port: number, callback: () => void, ip = "127.0.0.1") => {
+      app.use(koaBody());
       app.use(router.allowedMethods());
       app.use(router.routes());
-      app.addEventListener("listen", () => {
-        callback();
-      });
-      app.listen(`${ip}:${port}`);
+      app.listen(port, callback);
     },
 
     get: (
@@ -142,7 +145,8 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.get, devMode);
       router.get(
         ep,
-        ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        // @ts-ignore
+        ...middleware 
       );
     },
 
@@ -154,7 +158,8 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.head, devMode);
       router.head(
         ep,
-        ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        // @ts-ignore
+        ...middleware
       );
     },
 
@@ -166,7 +171,8 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.options, devMode);
       router.options(
         ep,
-        ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        // @ts-ignore
+        ...middleware
       );
     },
 
@@ -179,7 +185,8 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.post, devMode),
         router.post(
           ep,
-          ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+          // @ts-ignore
+          ...middleware
         );
     },
 
@@ -192,7 +199,8 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.put, devMode),
         router.put(
           ep,
-          ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        // @ts-ignore
+          ...middleware
         );
     },
 
@@ -205,7 +213,8 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.delete, devMode),
         router.delete(
           ep,
-          ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        // @ts-ignore
+          ...middleware
         );
     },
 
@@ -218,31 +227,36 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.patch, devMode),
         router.patch(
           ep,
-          ...middleware as [RouterMiddleware, ...RouterMiddleware[]],
+        // @ts-ignore
+          ...middleware
         );
     },
 
     saveApiDoc: () => {
-      if (!devMode) {
+      if (!devMode)
         return Logger.error(
           "Cannot save documentation in production env. Ignoring.",
-          TAG,
+          TAG
         );
-      }
 
-      Deno.writeTextFileSync("doc.md", "");
-      let docStr = "";
+      fs.writeFileSync("doc.md", "");
+      const docStream = fs.createWriteStream("doc.md");
+
+      docStream.on("finish", () => {
+        Logger.success("API doc saved to doc.md", TAG);
+        docStream.close();
+      });
 
       const params = getParams();
 
       for (const m in params) {
         const method = params[m];
-        docStr += `# ${m} routes\n`;
+        docStream.write(`# ${m} routes\n`);
         switch (m) {
           case METHODS.get: {
             if (method.length > 0) {
               method.forEach((route) => {
-                docStr += `${route}\n\n`;
+                docStream.write(`${route}\n\n`);
               });
             }
             break;
@@ -251,7 +265,7 @@ export function getWrappedApp(
           case METHODS.post: {
             if (method.length > 0) {
               method.forEach((route) => {
-                docStr += `${route}\n\n`;
+                docStream.write(`${route}\n\n`);
               });
             }
             break;
@@ -259,8 +273,7 @@ export function getWrappedApp(
         }
       }
 
-      Deno.writeTextFileSync("doc.md", docStr);
-      Logger.success("API doc saved to doc.md", TAG);
+      docStream.close();
     },
   };
 }

@@ -1,4 +1,4 @@
-import { ErrorKind } from './utils.ts';
+import { ErrorKind } from './utils';
 
 /*
     Throw this in case of a custom error
