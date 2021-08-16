@@ -1,10 +1,10 @@
 import { Logger } from "../src/logger";
 import { getWrappedApp } from "../src/index";
-import userRoutes from "./user-routes";
 import { String } from "drytypes";
+import userRoutes from "./user-routes";
 import koa from "koa";
 
-const app = getWrappedApp(new koa());
+const app = getWrappedApp(new koa(), true);
 
 const TAG = "hyougen/examples/index";
 
@@ -26,7 +26,7 @@ app.put("/testPut", { username: String }, (ctx) => {
   ctx.hyRes.genericSuccess();
 });
 
-// userRoutes(app, "/user");
+userRoutes(app, "/user");
 
 app.Listen(8040, () => {
   app.saveApiDoc();

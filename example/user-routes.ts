@@ -1,4 +1,4 @@
-import { getRoutedWrappedApp, WrappedApp } from "../src/index.ts";
+import { getRoutedWrappedApp, WrappedApp } from "../src/index";
 
 export default (wapp: WrappedApp, root: string) => {
   const app = getRoutedWrappedApp(wapp, root, (_, next) => {
