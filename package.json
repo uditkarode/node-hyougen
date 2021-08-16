@@ -1,13 +1,13 @@
 {
   "name": "hyougen",
-  "version": "0.1.1",
-  "description": "A wrapper for express.js with some handy stuff",
+  "version": "0.2.0",
+  "description": "A wrapper for koa.js with some handy stuff",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
     "build": "tsc --pretty"
   },
-  "repository": "https://github.com/uditkarode/hyougen",
+  "repository": "https://github.com/uditkarode/node-hyougen",
   "author": "Udit Karode <udit.karode@gmail.com>",
   "license": "GPL-3.0-or-later",
   "private": false,
