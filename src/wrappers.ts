@@ -244,7 +244,6 @@ export function getWrappedApp(
 
       docStream.on("finish", () => {
         Logger.success("API doc saved to doc.md", TAG);
-        docStream.close();
       });
 
       const params = getParams();
@@ -252,24 +251,10 @@ export function getWrappedApp(
       for (const m in params) {
         const method = params[m];
         docStream.write(`# ${m} routes\n`);
-        switch (m) {
-          case METHODS.get: {
-            if (method.length > 0) {
-              method.forEach((route) => {
-                docStream.write(`${route}\n\n`);
-              });
-            }
-            break;
-          }
-
-          case METHODS.post: {
-            if (method.length > 0) {
-              method.forEach((route) => {
-                docStream.write(`${route}\n\n`);
-              });
-            }
-            break;
-          }
+        if (method.length > 0) {
+          method.forEach((route) => {
+            docStream.write(`${route}\n\n`);
+          });
         }
       }
 
