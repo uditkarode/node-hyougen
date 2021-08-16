@@ -145,7 +145,7 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.get, devMode);
       router.get(
         ep,
-        // @ts-ignore
+        // @ts-ignore the extra fields don't matter
         ...middleware 
       );
     },
@@ -158,7 +158,7 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.head, devMode);
       router.head(
         ep,
-        // @ts-ignore
+        // @ts-ignore the extra fields don't matter
         ...middleware
       );
     },
@@ -171,7 +171,7 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.options, devMode);
       router.options(
         ep,
-        // @ts-ignore
+        // @ts-ignore the extra fields don't matter
         ...middleware
       );
     },
@@ -185,7 +185,7 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.post, devMode),
         router.post(
           ep,
-          // @ts-ignore
+          // @ts-ignore the extra fields don't matter
           ...middleware
         );
     },
@@ -199,7 +199,7 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.put, devMode),
         router.put(
           ep,
-        // @ts-ignore
+          // @ts-ignore the extra fields don't matter
           ...middleware
         );
     },
@@ -213,7 +213,7 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.delete, devMode),
         router.delete(
           ep,
-        // @ts-ignore
+          // @ts-ignore the extra fields don't matter
           ...middleware
         );
     },
@@ -227,7 +227,7 @@ export function getWrappedApp(
       recordBodiedRoute(ep, structure, METHODS.patch, devMode),
         router.patch(
           ep,
-        // @ts-ignore
+          // @ts-ignore the extra fields don't matter
           ...middleware
         );
     },
