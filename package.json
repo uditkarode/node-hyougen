@@ -1,7 +1,10 @@
 {
   "name": "hyougen",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "A wrapper for koa.js with some handy stuff",
+  "files": [
+    "lib"
+  ],
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -15,10 +18,10 @@
     "drytypes": "^0.3.1",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",
-    "koa-router": "^10.0.0"
+    "koa-router": "^10.0.0",
+    "@types/koa": "^2.13.4"
   },
   "devDependencies": {
-    "@types/koa": "^2.13.4",
     "@types/koa-router": "^7.4.4",
     "@types/node": "^16.0.0",
     "typescript": "^4.3.5"
