@@ -1,6 +1,6 @@
 {
   "name": "hyougen",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A wrapper for koa.js with some handy stuff",
   "files": [
     "lib"
@@ -17,12 +17,12 @@
   "dependencies": {
     "@koa/router": "^10.1.0",
     "@types/koa": "^2.13.4",
+    "@types/koa__router": "^8.0.7",
     "drytypes": "^0.4.0",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0"
   },
   "devDependencies": {
-    "@types/koa__router": "^8.0.7",
     "@types/node": "^16.0.0",
     "typescript": "^4.3.5"
   }
