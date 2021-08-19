@@ -177,8 +177,8 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
-      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
+      middleware.unshift(koaBody({ multipart: true }));
       recordBodiedRoute(ep, structure, METHODS.post, devMode),
         router.post(
           ep,
@@ -191,8 +191,8 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
-      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
+      middleware.unshift(koaBody({ multipart: true }));
       recordBodiedRoute(ep, structure, METHODS.put, devMode),
         router.put(
           ep,
@@ -205,8 +205,8 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
-      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
+      middleware.unshift(koaBody({ multipart: true }));
       recordBodiedRoute(ep, structure, METHODS.delete, devMode),
         router.delete(
           ep,
@@ -219,8 +219,8 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
-      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
+      middleware.unshift(koaBody({ multipart: true }));
       recordBodiedRoute(ep, structure, METHODS.patch, devMode),
         router.patch(
           ep,
