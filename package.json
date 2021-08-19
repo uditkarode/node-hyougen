@@ -1,6 +1,6 @@
 {
   "name": "hyougen",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A wrapper for koa.js with some handy stuff",
   "files": [
     "lib"
