@@ -131,7 +131,6 @@ export function getWrappedApp(
 
   return {
     Listen: (port: number, callback: () => void, ip = "127.0.0.1") => {
-      app.use(koaBody({ multipart: true }));
       app.use(router.allowedMethods());
       app.use(router.routes());
       app.listen(port, callback);
@@ -145,7 +144,6 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.get, devMode);
       router.get(
         ep,
-        // @ts-ignore the extra fields don't matter
         ...middleware,
       );
     },
@@ -158,7 +156,6 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.head, devMode);
       router.head(
         ep,
-        // @ts-ignore the extra fields don't matter
         ...middleware,
       );
     },
@@ -171,7 +168,6 @@ export function getWrappedApp(
       recordRoute(ep, METHODS.options, devMode);
       router.options(
         ep,
-        // @ts-ignore the extra fields don't matter
         ...middleware,
       );
     },
@@ -181,11 +177,11 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
+      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       recordBodiedRoute(ep, structure, METHODS.post, devMode),
         router.post(
           ep,
-          // @ts-ignore the extra fields don't matter
           ...middleware,
         );
     },
@@ -195,11 +191,11 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
+      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       recordBodiedRoute(ep, structure, METHODS.put, devMode),
         router.put(
           ep,
-          // @ts-ignore the extra fields don't matter
           ...middleware,
         );
     },
@@ -209,11 +205,11 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
+      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       recordBodiedRoute(ep, structure, METHODS.delete, devMode),
         router.delete(
           ep,
-          // @ts-ignore the extra fields don't matter
           ...middleware,
         );
     },
@@ -223,11 +219,11 @@ export function getWrappedApp(
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
+      middleware.unshift(koaBody({ multipart: true }));
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       recordBodiedRoute(ep, structure, METHODS.patch, devMode),
         router.patch(
           ep,
-          // @ts-ignore the extra fields don't matter
           ...middleware,
         );
     },
