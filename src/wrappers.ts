@@ -7,16 +7,16 @@ import { HyError } from "./hyougen-error";
 import { getParams, recordBodiedRoute, recordRoute } from "./handlers";
 import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers";
 import { getCodeFromKind, Response } from "./utils";
-import fs from 'fs';
-import KoaRouter = require("koa-router");
-import koa from 'koa';
+import fs from "fs";
+import KoaRouter from "@koa/router";
+import koa from "koa";
 import koaBody = require("koa-body");
 
 import {
-   DefaultState,
-   DefaultContext,
-   ParameterizedContext as KoaContext,
-   Response as KoaResponse,
+  DefaultContext,
+  DefaultState,
+  ParameterizedContext as KoaContext,
+  Response as KoaResponse,
 } from "koa";
 
 type KoaApplication = koa<DefaultState, DefaultContext>;
@@ -146,7 +146,7 @@ export function getWrappedApp(
       router.get(
         ep,
         // @ts-ignore the extra fields don't matter
-        ...middleware 
+        ...middleware,
       );
     },
 
@@ -159,7 +159,7 @@ export function getWrappedApp(
       router.head(
         ep,
         // @ts-ignore the extra fields don't matter
-        ...middleware
+        ...middleware,
       );
     },
 
@@ -172,7 +172,7 @@ export function getWrappedApp(
       router.options(
         ep,
         // @ts-ignore the extra fields don't matter
-        ...middleware
+        ...middleware,
       );
     },
 
@@ -186,7 +186,7 @@ export function getWrappedApp(
         router.post(
           ep,
           // @ts-ignore the extra fields don't matter
-          ...middleware
+          ...middleware,
         );
     },
 
@@ -200,7 +200,7 @@ export function getWrappedApp(
         router.put(
           ep,
           // @ts-ignore the extra fields don't matter
-          ...middleware
+          ...middleware,
         );
     },
 
@@ -214,7 +214,7 @@ export function getWrappedApp(
         router.delete(
           ep,
           // @ts-ignore the extra fields don't matter
-          ...middleware
+          ...middleware,
         );
     },
 
@@ -228,16 +228,17 @@ export function getWrappedApp(
         router.patch(
           ep,
           // @ts-ignore the extra fields don't matter
-          ...middleware
+          ...middleware,
         );
     },
 
     saveApiDoc: () => {
-      if (!devMode)
+      if (!devMode) {
         return Logger.error(
           "Cannot save documentation in production env. Ignoring.",
-          TAG
+          TAG,
         );
+      }
 
       fs.writeFileSync("doc.md", "");
       const docStream = fs.createWriteStream("doc.md");
