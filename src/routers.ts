@@ -4,15 +4,15 @@ import { ParameterizedContext } from "koa";
 import { RouterParamContext } from "@koa/router";
 import { Files } from "formidable";
 
-type RouterContext<O = any> = ParameterizedContext<
+type RouterContext = ParameterizedContext<
   any,
   RouterParamContext<any, {}>,
-  O
+  any
 >;
 
 export type NonBodiedContext = RouterContext & { hyRes: WrappedResponse };
 
-export type BodiedContext<O extends dtObj> = RouterContext<dtObjStatic<O>> & {
+export type BodiedContext<O extends dtObj> = RouterContext & {
   hyBody: dtObjStatic<O>;
   hyRes: WrappedResponse;
   hyFiles: Files;
