@@ -76,7 +76,7 @@ Routing, or splitting routes into different files based on how they're related, 
 export default (wapp: WrappedApp, root: string) {
   const app = getRoutedWrappedApp(wapp, root, ...middleware);
   
-  app.Get(...);
+  app.get(...);
   ...
 }
 ```
