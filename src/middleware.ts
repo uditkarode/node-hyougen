@@ -1,20 +1,19 @@
 import { ErrorKind, getParamsFromStructure } from "./utils";
 import { ResponseStrings } from "./constants";
-import {
-  dtObj,
-  ExactRecord as DryRecord,
-  ValidationError,
-} from "drytypes";
+import { dtObj, ExactRecord as DryRecord, ValidationError } from "drytypes";
 import { HyError } from "./hyougen-error";
 import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers";
 import { getWrappedResponse } from "./wrappers";
-import {} from 'koa-body';
+import {} from "koa-body";
 
 const TAG = "hyougen/middleware";
 
-export const NonBodiedMiddleware: hyRouterMiddleware = (context, next) => {
+export const NonBodiedMiddleware: hyRouterMiddleware = async (
+  context,
+  next,
+) => {
   context.hyRes = getWrappedResponse(context.response);
-  next();
+  await next();
 };
 
 export function BodiedMiddleware<O extends dtObj>(
