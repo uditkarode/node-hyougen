@@ -96,7 +96,8 @@ export function getWrappedApp(
   if (devMode) {
     /* set up a dummy body as a reminder */
     app.use(async (ctx, next) => {
-      ctx.response.body = "No response body was assigned!";
+      ctx.response.body =
+        "No response body was assigned! This is a dev-only message and this route will be a 404 in prod.";
       await next();
     });
   }
@@ -138,7 +139,7 @@ export function getWrappedApp(
   const router = new KoaRouter();
 
   return {
-    Listen: (port: number, callback: () => void, ip = "127.0.0.1") => {
+    Listen: (port: number, callback: () => void) => {
       app.use(router.allowedMethods());
       app.use(router.routes());
       app.listen(port, callback);
