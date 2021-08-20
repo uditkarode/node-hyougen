@@ -93,6 +93,14 @@ export function getWrappedApp(
   app: KoaApplication,
   devMode = false,
 ): WrappedApp {
+  if (devMode) {
+    /* set up a dummy body as a reminder */
+    app.use(async (ctx, next) => {
+      ctx.response.body = "No response body was assigned!";
+      await next();
+    });
+  }
+
   /* set up custom error handler */
   app.use(
     async (
