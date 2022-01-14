@@ -121,16 +121,18 @@ export function getWrappedApp(
             );
           }
         } else {
-          let culprit = "Unknown";
+          if (error instanceof Error) {
+            let culprit = "Unknown";
 
-          if (error.stack) {
-            const stack = error.stack.split("\n")[2].split("/");
-            culprit = stack[stack.length - 1].split(":")[0];
+            if (error.stack) {
+              const stack = error.stack.split("\n")[2].split("/");
+              culprit = stack[stack.length - 1].split(":")[0];
+            }
+
+            Logger.error(error.stack || "No stack!", culprit);
+            ctx.response.status = 500;
+            ctx.response.body = Response("failure", ResponseStrings.ERR_GENERIC);
           }
-
-          Logger.error(error.stack || "No stack!", culprit);
-          ctx.response.status = 500;
-          ctx.response.body = Response("failure", ResponseStrings.ERR_GENERIC);
         }
       }
     },
