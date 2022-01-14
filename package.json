@@ -18,7 +18,7 @@
     "@koa/router": "^10.1.0",
     "@types/koa": "^2.13.4",
     "@types/koa__router": "^8.0.7",
-    "drytypes": "^0.4.0",
+    "drytypes": "^0.4.6",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0"
   },
