@@ -125,7 +125,8 @@ export function getWrappedApp(
             let culprit = "Unknown";
 
             if (error.stack) {
-              const stack = error.stack.split("\n")[2].split("/");
+              const rs = error.stack.split("\n")[2] ?? "unknown";
+              const stack = rs.split("/");
               culprit = stack[stack.length - 1].split(":")[0];
             }
 
