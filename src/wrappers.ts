@@ -173,7 +173,7 @@ export function getWrappedApp(app: KoaApplication, devMode = false): WrappedApp 
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
-      middleware.unshift(koaBody({ multipart: true }));
+      middleware.unshift(koaBody({ multipart: true, parsedMethods: ["DELETE"] }));
       recordBodiedRoute(ep, structure, METHODS.delete, devMode), router.delete(ep, ...middleware);
     },
 
