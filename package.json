@@ -15,15 +15,15 @@
   "license": "GPL-3.0-or-later",
   "private": false,
   "dependencies": {
-    "@koa/router": "^10.1.1",
+    "@koa/router": "^12.0.0",
     "@types/koa": "^2.13.4",
     "@types/koa__router": "^8.0.11",
-    "drytypes": "^0.4.6",
+    "drytypes": "^0.5.1",
     "koa": "^2.13.4",
-    "koa-body": "^4.2.0"
+    "koa-body": "^5.0.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.8",
+    "@types/node": "^18.6.3",
     "typescript": "^4.5.4"
   }
 }
