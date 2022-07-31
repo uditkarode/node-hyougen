@@ -38,19 +38,19 @@ export interface WrappedApp {
     ...middleware: hyBodiedRouterMiddleware<O>[]
   ): void;
 
-  put<O extends dtObj>(
+  put<O extends BodiedDtObj<unknown>>(
     ep: string,
     structure: O,
     ...middleware: hyBodiedRouterMiddleware<O>[]
   ): void;
 
-  delete<O extends dtObj>(
+  delete<O extends BodiedDtObj<unknown>>(
     ep: string,
     structure: O,
     ...middleware: hyBodiedRouterMiddleware<O>[]
   ): void;
 
-  patch<O extends dtObj>(
+  patch<O extends BodiedDtObj<unknown>>(
     ep: string,
     structure: O,
     ...middleware: hyBodiedRouterMiddleware<O>[]
@@ -157,34 +157,37 @@ export function getWrappedApp(app: KoaApplication, devMode = false): WrappedApp 
         router.post(ep, ...middleware);
     },
 
-    put: function <O extends dtObj>(
+    put: function <O extends BodiedDtObj<unknown>>(
       ep: string,
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true }));
-      recordBodiedRoute(ep, structure, METHODS.put, devMode), router.put(ep, ...middleware);
+      recordBodiedRoute(ep, removeErrorChoices(structure), METHODS.put, devMode),
+        router.put(ep, ...middleware);
     },
 
-    delete: function <O extends dtObj>(
+    delete: function <O extends BodiedDtObj<unknown>>(
       ep: string,
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true, parsedMethods: ["DELETE"] }));
-      recordBodiedRoute(ep, structure, METHODS.delete, devMode), router.delete(ep, ...middleware);
+      recordBodiedRoute(ep, removeErrorChoices(structure), METHODS.delete, devMode),
+        router.delete(ep, ...middleware);
     },
 
-    patch: function <O extends dtObj>(
+    patch: function <O extends BodiedDtObj<unknown>>(
       ep: string,
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true }));
-      recordBodiedRoute(ep, structure, METHODS.patch, devMode), router.patch(ep, ...middleware);
+      recordBodiedRoute(ep, removeErrorChoices(structure), METHODS.patch, devMode),
+        router.patch(ep, ...middleware);
     },
 
     saveApiDoc: () => {
