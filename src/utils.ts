@@ -1,6 +1,26 @@
-import { dtObj } from "drytypes";
+import { DryType, dtObj } from "drytypes";
 import { WrappedApp } from "./wrappers";
 import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers";
+
+export type BodiedDtObj<T> = Record<string, DryType<T> | [DryType<T>, boolean]>;
+
+export type RemoveOptionalErrorChoices<T> = T extends [DryType<infer U>, boolean] ? DryType<U> : T;
+
+export type ObjRemoveOptionalErrorChoices<T extends BodiedDtObj<unknown>> = {
+  [K in keyof T]: RemoveOptionalErrorChoices<T[K]>;
+};
+
+type GetExtension<T> = T extends BodiedDtObj<infer U> ? U : never;
+
+export const removeErrorChoices = <T extends BodiedDtObj<unknown>>(bodiedDtObj: T) => {
+  const ret: Partial<typeof bodiedDtObj> = {};
+
+  for (const [k, v] of Object.entries(bodiedDtObj)) {
+    ret[k as keyof T] = (Array.isArray(v) ? v[0] : v) as T[keyof T];
+  }
+
+  return ret as Record<string, DryType<GetExtension<T>>>;
+};
 
 export const enum ErrorKind {
   /** indicates that the server cannot or will not process the request because the received syntax is invalid, nonsensical, or exceeds some limitation on what the server is willing to process. */
@@ -213,23 +233,11 @@ export function getRoutedWrappedApp(
   return {
     Listen: (port: number, callback: () => void) => wapp.Listen(port, callback),
     get: (ep, ...middleware) =>
-      wapp.get(
-        `${root}${ep}`,
-        ...(rootMware as hyRouterMiddleware[]),
-        ...middleware,
-      ),
+      wapp.get(`${root}${ep}`, ...(rootMware as hyRouterMiddleware[]), ...middleware),
     head: (ep, ...middleware) =>
-      wapp.head(
-        `${root}${ep}`,
-        ...(rootMware as hyRouterMiddleware[]),
-        ...middleware,
-      ),
+      wapp.head(`${root}${ep}`, ...(rootMware as hyRouterMiddleware[]), ...middleware),
     options: (ep, ...middleware) =>
-      wapp.options(
-        `${root}${ep}`,
-        ...(rootMware as hyRouterMiddleware[]),
-        ...middleware,
-      ),
+      wapp.options(`${root}${ep}`, ...(rootMware as hyRouterMiddleware[]), ...middleware),
     post: (ep, structure, ...middleware) =>
       wapp.post(
         `${root}${ep}`,

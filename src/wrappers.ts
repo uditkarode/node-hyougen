@@ -1,6 +1,6 @@
 import { ResponseStrings } from "./constants";
 import { dtObj } from "drytypes";
-import { METHODS } from "./utils";
+import { BodiedDtObj, METHODS, removeErrorChoices } from "./utils";
 import { BodiedMiddleware, NonBodiedMiddleware } from "./middleware";
 import { Logger } from "./logger";
 import { HyError } from "./hyougen-error";
@@ -26,22 +26,13 @@ const TAG = "hyougen/wrappers";
 export interface WrappedApp {
   Listen(post: number, callback: () => void): void;
 
-  get(
-    ep: string,
-    ...middleware: hyRouterMiddleware[]
-  ): void;
+  get(ep: string, ...middleware: hyRouterMiddleware[]): void;
 
-  head(
-    ep: string,
-    ...middleware: hyRouterMiddleware[]
-  ): void;
+  head(ep: string, ...middleware: hyRouterMiddleware[]): void;
 
-  options(
-    ep: string,
-    ...middleware: hyRouterMiddleware[]
-  ): void;
+  options(ep: string, ...middleware: hyRouterMiddleware[]): void;
 
-  post<O extends dtObj>(
+  post<O extends BodiedDtObj<unknown>>(
     ep: string,
     structure: O,
     ...middleware: hyBodiedRouterMiddleware<O>[]
@@ -89,10 +80,7 @@ export function getWrappedResponse(res: KoaResponse): WrappedResponse {
   };
 }
 
-export function getWrappedApp(
-  app: KoaApplication,
-  devMode = false,
-): WrappedApp {
+export function getWrappedApp(app: KoaApplication, devMode = false): WrappedApp {
   if (devMode) {
     /* set up a dummy body as a reminder */
     app.use(async (ctx, next) => {
@@ -103,41 +91,33 @@ export function getWrappedApp(
   }
 
   /* set up custom error handler */
-  app.use(
-    async (
-      ctx: KoaContext,
-      next: () => Promise<unknown>,
-    ) => {
-      try {
-        await next();
-      } catch (error) {
-        if (error instanceof HyError) {
-          ctx.response.status = getCodeFromKind(error.errorKind);
-          ctx.response.body = Response("failure", error.errorMsg, error.extras);
-          if (devMode) {
-            Logger.error(
-              error.stack || "No stack!",
-              error.tag + " (dev-only) ",
-            );
-          }
-        } else {
-          if (error instanceof Error) {
-            let culprit = "Unknown";
+  app.use(async (ctx: KoaContext, next: () => Promise<unknown>) => {
+    try {
+      await next();
+    } catch (error) {
+      if (error instanceof HyError) {
+        ctx.response.status = getCodeFromKind(error.errorKind);
+        ctx.response.body = Response("failure", error.errorMsg, error.extras);
+        if (devMode) {
+          Logger.error(error.stack || "No stack!", error.tag + " (dev-only) ");
+        }
+      } else {
+        if (error instanceof Error) {
+          let culprit = "Unknown";
 
-            if (error.stack) {
-              const rs = error.stack.split("\n")[2] ?? "unknown";
-              const stack = rs.split("/");
-              culprit = stack[stack.length - 1].split(":")[0];
-            }
-
-            Logger.error(error.stack || "No stack!", culprit);
-            ctx.response.status = 500;
-            ctx.response.body = Response("failure", ResponseStrings.ERR_GENERIC);
+          if (error.stack) {
+            const rs = error.stack.split("\n")[2] ?? "unknown";
+            const stack = rs.split("/");
+            culprit = stack[stack.length - 1].split(":")[0];
           }
+
+          Logger.error(error.stack || "No stack!", culprit);
+          ctx.response.status = 500;
+          ctx.response.body = Response("failure", ResponseStrings.ERR_GENERIC);
         }
       }
-    },
-  );
+    }
+  });
 
   const router = new KoaRouter();
 
@@ -148,54 +128,33 @@ export function getWrappedApp(
       app.listen(port, callback);
     },
 
-    get: (
-      ep: string,
-      ...middleware: hyRouterMiddleware[]
-    ) => {
+    get: (ep: string, ...middleware: hyRouterMiddleware[]) => {
       middleware.unshift(NonBodiedMiddleware);
       recordRoute(ep, METHODS.get, devMode);
-      router.get(
-        ep,
-        ...middleware,
-      );
+      router.get(ep, ...middleware);
     },
 
-    head: (
-      ep: string,
-      ...middleware: hyRouterMiddleware[]
-    ) => {
+    head: (ep: string, ...middleware: hyRouterMiddleware[]) => {
       middleware.unshift(NonBodiedMiddleware);
       recordRoute(ep, METHODS.head, devMode);
-      router.head(
-        ep,
-        ...middleware,
-      );
+      router.head(ep, ...middleware);
     },
 
-    options: (
-      ep: string,
-      ...middleware: hyRouterMiddleware[]
-    ) => {
+    options: (ep: string, ...middleware: hyRouterMiddleware[]) => {
       middleware.unshift(NonBodiedMiddleware);
       recordRoute(ep, METHODS.options, devMode);
-      router.options(
-        ep,
-        ...middleware,
-      );
+      router.options(ep, ...middleware);
     },
 
-    post: function <O extends dtObj>(
+    post: function <O extends BodiedDtObj<unknown>>(
       ep: string,
       structure: O,
       ...middleware: hyBodiedRouterMiddleware<O>[]
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true }));
-      recordBodiedRoute(ep, structure, METHODS.post, devMode),
-        router.post(
-          ep,
-          ...middleware,
-        );
+      recordBodiedRoute(ep, removeErrorChoices(structure), METHODS.post, devMode),
+        router.post(ep, ...middleware);
     },
 
     put: function <O extends dtObj>(
@@ -205,11 +164,7 @@ export function getWrappedApp(
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true }));
-      recordBodiedRoute(ep, structure, METHODS.put, devMode),
-        router.put(
-          ep,
-          ...middleware,
-        );
+      recordBodiedRoute(ep, structure, METHODS.put, devMode), router.put(ep, ...middleware);
     },
 
     delete: function <O extends dtObj>(
@@ -219,11 +174,7 @@ export function getWrappedApp(
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true }));
-      recordBodiedRoute(ep, structure, METHODS.delete, devMode),
-        router.delete(
-          ep,
-          ...middleware,
-        );
+      recordBodiedRoute(ep, structure, METHODS.delete, devMode), router.delete(ep, ...middleware);
     },
 
     patch: function <O extends dtObj>(
@@ -233,19 +184,12 @@ export function getWrappedApp(
     ) {
       middleware.unshift(BodiedMiddleware<O>(structure, devMode));
       middleware.unshift(koaBody({ multipart: true }));
-      recordBodiedRoute(ep, structure, METHODS.patch, devMode),
-        router.patch(
-          ep,
-          ...middleware,
-        );
+      recordBodiedRoute(ep, structure, METHODS.patch, devMode), router.patch(ep, ...middleware);
     },
 
     saveApiDoc: () => {
       if (!devMode) {
-        return Logger.error(
-          "Cannot save documentation in production env. Ignoring.",
-          TAG,
-        );
+        return Logger.error("Cannot save documentation in production env. Ignoring.", TAG);
       }
 
       fs.writeFileSync("doc.md", "");
@@ -261,7 +205,7 @@ export function getWrappedApp(
         const method = params[m];
         docStream.write(`# ${m} routes\n`);
         if (method.length > 0) {
-          method.forEach((route) => {
+          method.forEach(route => {
             docStream.write(`${route}\n\n`);
           });
         }

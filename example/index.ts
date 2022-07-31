@@ -1,6 +1,6 @@
 import { Logger } from "../src/logger";
 import { getWrappedApp } from "../src/index";
-import { String } from "drytypes";
+import { makeDryType, String } from "drytypes";
 import userRoutes from "./user-routes";
 import koa from "koa";
 
@@ -8,20 +8,35 @@ const app = getWrappedApp(new koa(), true);
 
 const TAG = "hyougen/examples/index";
 
-app.get("/testGet", (_, next) => {
-  console.log("heu!");
-  next();
-}, (ctx) => {
-  ctx.hyRes.genericSuccess();
-});
+app.get(
+  "/testGet",
+  (_, next) => {
+    console.log("heu!");
+    next();
+  },
+  ctx => {
+    ctx.hyRes.genericSuccess();
+  },
+);
 
-app.post("/testPost", { username: String }, (ctx) => {
-  ctx.hyRes.success("nice work buddy, you sent me " + ctx.hyBody.username, {
+const Password = makeDryType<string>(x => {
+  if (!String.guard(x)) return { success: false };
+
+  if (x.length < 6 || x.length > 30)
+    return {
+      success: false,
+      message: "Password must be 6-30 characters long",
+    };
+  else return { success: true };
+}, "password (string) ");
+
+app.post("/testPost", { password: [Password, true] }, ctx => {
+  ctx.hyRes.success("nice work buddy, you sent me " + ctx.hyBody.password, {
     hey: "hello",
   });
 });
 
-app.put("/testPut", { username: String }, (ctx) => {
+app.put("/testPut", { username: String }, ctx => {
   console.log(ctx.hyFiles);
   ctx.hyRes.genericSuccess();
 });

@@ -1,4 +1,4 @@
-import { ErrorKind } from './utils';
+import { ErrorKind } from "./utils";
 
 /*
     Throw this in case of a custom error
@@ -7,16 +7,21 @@ import { ErrorKind } from './utils';
     displaying process. 
 */
 export class HyError extends Error {
-    errorKind: ErrorKind;
-    errorMsg: string;
-    tag: string;
-    extras: Record<string, unknown>;
+  errorKind: ErrorKind;
+  errorMsg: string;
+  tag: string;
+  extras: Record<string, unknown>;
 
-    constructor (errorKind: ErrorKind, errorMsg: string, tag: string, extras: Record<string, unknown> = {}) {
-        super()
-        this.errorKind = errorKind;
-        this.errorMsg = errorMsg;
-        this.tag = tag;
-        this.extras = extras;
-    }
+  constructor(
+    errorKind: ErrorKind,
+    errorMsg: string,
+    tag: string = "",
+    extras: Record<string, unknown> = {},
+  ) {
+    super();
+    this.errorKind = errorKind;
+    this.errorMsg = errorMsg;
+    this.tag = tag;
+    this.extras = extras;
+  }
 }

@@ -5,6 +5,9 @@
 
 # POST routes
 * **POST** /testPost
-	- `username`: string
+	- `password`: password (string) 
 
 # PUT routes
+* **PUT** /testPut
+	- `username`: string
+
