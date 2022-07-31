@@ -2,9 +2,9 @@ import { DryType, dtObj } from "drytypes";
 import { WrappedApp } from "./wrappers";
 import { hyBodiedRouterMiddleware, hyRouterMiddleware } from "./routers";
 
-export type BodiedDtObj<T> = Record<string, DryType<T> | [DryType<T>, boolean]>;
+export type BodiedDtObj<T> = Record<string, DryType<T> | [DryType<T>]>;
 
-export type RemoveOptionalErrorChoices<T> = T extends [DryType<infer U>, boolean] ? DryType<U> : T;
+export type RemoveOptionalErrorChoices<T> = T extends [DryType<infer U>] ? DryType<U> : T;
 
 export type ObjRemoveOptionalErrorChoices<T extends BodiedDtObj<unknown>> = {
   [K in keyof T]: RemoveOptionalErrorChoices<T[K]>;

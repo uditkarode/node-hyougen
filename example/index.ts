@@ -30,7 +30,7 @@ const Password = makeDryType<string>(x => {
   else return { success: true };
 }, "password (string) ");
 
-app.post("/testPost", { password: [Password, true] }, ctx => {
+app.post("/testPost", { password: [Password] }, ctx => {
   ctx.hyRes.success("nice work buddy, you sent me " + ctx.hyBody.password, {
     hey: "hello",
   });

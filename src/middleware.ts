@@ -45,7 +45,7 @@ export function BodiedMiddleware<O extends BodiedDtObj<unknown>>(
       } else {
         if (validation.in) {
           const v = structure[validation.in! as keyof typeof structure];
-          if (Array.isArray(v) && v[1])
+          if (Array.isArray(v))
             throw new HyError(
               ErrorKind.BAD_REQUEST,
               validation.message! ?? "",
