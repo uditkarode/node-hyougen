@@ -19,7 +19,7 @@ export const removeErrorChoices = <T extends BodiedDtObj<unknown>>(bodiedDtObj: 
     ret[k as keyof T] = (Array.isArray(v) ? v[0] : v) as T[keyof T];
   }
 
-  return ret as Record<string, DryType<GetExtension<T>>>;
+  return ret as ObjRemoveOptionalErrorChoices<T>;
 };
 
 export const enum ErrorKind {
